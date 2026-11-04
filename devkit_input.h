@@ -24,7 +24,7 @@ constexpr int kKeyInteract   = VK_F20;
 constexpr int kKeyReposition = VK_F21;
 constexpr int kKeyReset      = VK_F22;
 constexpr int kKeyHeartbeat  = VK_F23;
-constexpr int kKeyButtonA    = VK_F24; // the right controller's A button, held as long as the key is (SteamVR's dashboard)
+constexpr int kKeyButtonA    = VK_F24; // Select: the right controller's A and trigger, held as long as the key is (SteamVR's dashboard)
 
 constexpr double kHeartbeatTimeout   = 0.4;   // seconds without a heartbeat change = frontend gone
 constexpr double kButtonANoHeartbeat = 2.0;   // A held without the heartbeat counts this long at most
@@ -34,7 +34,7 @@ constexpr double kDefaultTurnSpeed   = 216.0; // degrees per second
 constexpr double kMaxFrameDt         = 0.1;   // a hitch longer than this doesn't cause a turn jump
 constexpr double kMaxPitch           = 89.0;  // look up/down stops here, like a neck
 constexpr double kDefaultMouseSens   = 0.05;  // degrees per mouse count (the frontend sends this times its slider)
-constexpr const char* kDriverBuild   = "2.0.1.1"; // reported in driver_status.txt
+constexpr const char* kDriverBuild   = "2.0.1.2"; // reported in driver_status.txt
 constexpr double kMaxMouseStep       = 90.0;  // most the mouse can turn in one frame, so a burst can't spin the view
 
 struct Pose {

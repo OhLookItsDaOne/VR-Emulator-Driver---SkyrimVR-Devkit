@@ -17,7 +17,8 @@ for action in MenuActions
 for action in ControlActions
     AllBindActions.Push(action)
 
-; F24: the right controller's A button (held as long as the key is), for SteamVR's dashboard and other A prompts
+; F24: Select, the right controller's A and trigger together (held as long as the key is). SteamVR's dashboard clicks
+; with the trigger where the laser points (aim with the look keys or the mouse), A prompts take A.
 GhostKeys := Map("LookUp", "F16", "LookDown", "F17", "LookLeft", "F18", "LookRight", "F19", "Interact", "F20", "PressA", "F24")
 GhostHeld := Map("LookUp", false, "LookDown", false, "LookLeft", false, "LookRight", false, "Interact", false, "PressA", false)
 GhostReposition := "F21"
@@ -35,7 +36,7 @@ MovementKeyLabels := Map(
     "LookLeft",    "Look Left",
     "LookRight",   "Look Right",
     "Interact",    "Interact",
-    "PressA",      "Press A"
+    "PressA",      "Select (A)"
 )
 MovementKeyDefaults := Map(
     "MoveUp",      "sc012", ; E
@@ -144,9 +145,9 @@ UpdateLiveMovementMode()
 RepoURL := "https://github.com/OhLookItsDaOne/VR-Emulator-Driver---SkyrimVR-Devkit/raw/main/null%20driver.zip"
 
 ; This is NOT a build/release version for the AHK tool itself, this is for the driver. For anyone reading this, PLEASE don't touch these, this is for the tool to make sure things aren't fucked.
-ExpectedDriverVersion := "2.0.1.1"
+ExpectedDriverVersion := "2.0.1.2"
 
-ScriptVersion := "2.0.1.1" ; Same as the other one, except for the Frontend only.
+ScriptVersion := "2.0.1.2" ; Same as the other one, except for the Frontend only.
 
 CandlelightOn := false
 
@@ -540,8 +541,8 @@ BuildQuickCommandsWindow(x := "", y := "") {
     BtnCloseDash := QuickCommandsGui.AddButton("x15 y15 w200 h28", "Close Dashboard")
     BtnCloseDash.OnEvent("Click", (*) => TestPulse("F13"))
 
-    ; The right controller's A, held for a moment (the Press A key holds it as long as it's held)
-    BtnPressA := QuickCommandsGui.AddButton("x15 y+8 w200 h28", "Press A (controller)")
+    ; Select: the right controller's A and trigger, for a moment (the Select key holds them as long as it's held)
+    BtnPressA := QuickCommandsGui.AddButton("x15 y+8 w200 h28", "Select (A + trigger)")
     BtnPressA.OnEvent("Click", (*) => TestPulse("F24"))
 
     BtnNudge := QuickCommandsGui.AddButton("x235 y15 w200 h28", "Move to Console View")
