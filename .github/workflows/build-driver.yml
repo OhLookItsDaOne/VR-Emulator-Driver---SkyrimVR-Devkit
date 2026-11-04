@@ -1,0 +1,45 @@
+name: Build null driver
+
+# Builds driver_null.dll (Release x64 against OpenVR 1.26.7, as the README says) and packs it into "null driver.zip"
+# the way the frontend downloads it: null/bin/win64/driver_null.dll with its .sha256, and devkit_version.txt.
+# The zip comes out as an artifact; it is committed to the repository by hand.
+on:
+    push:
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: windows-2022
+        defaults:
+            run:
+                shell: pwsh
+        steps:
+            - uses: actions/checkout@v5
+
+            - name: OpenVR 1.26.7 headers where the project looks for them
+              run: git clone --depth 1 --branch v1.26.7 https://github.com/ValveSoftware/openvr.git C:\SDKs\OpenVR\openvr-1.26.7
+
+            - uses: microsoft/setup-msbuild@v2
+
+            - name: Build
+              run: msbuild driver_sample.vcxproj /m /p:Configuration=Release /p:Platform=x64 "/p:SolutionDir=$PWD\\"
+
+            - name: Pack null driver.zip
+              run: |
+                  $version = (Select-String -Path devkit_input.h -Pattern 'kDriverBuild\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
+                  Write-Host "driver version $version"
+                  Expand-Archive -LiteralPath "null driver.zip" -DestinationPath pack -Force
+                  Copy-Item bin\drivers\sample\bin\win64\driver_sample.dll pack\null\bin\win64\driver_null.dll -Force
+                  $hash = (Get-FileHash pack\null\bin\win64\driver_null.dll -Algorithm SHA256).Hash.ToLower()
+                  Set-Content -NoNewline -Encoding ascii pack\null\bin\win64\driver_null.dll.sha256 $hash
+                  Set-Content -NoNewline -Encoding ascii pack\null\devkit_version.txt $version
+                  Get-ChildItem -Recurse pack | Select-Object FullName, Length
+                  Compress-Archive -Path pack\null -DestinationPath "null driver.zip" -Force
+                  Write-Host "sha256 $hash"
+
+            - uses: actions/upload-artifact@v5
+              with:
+                  name: null-driver
+                  path: null driver.zip
+                  if-no-files-found: error

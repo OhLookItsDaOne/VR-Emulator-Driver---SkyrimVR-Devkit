@@ -1,5 +1,22 @@
 # SkyrimVR Modders Devkit Documentation
 
+> **This fork** ([OhLookItsDaOne](https://github.com/OhLookItsDaOne/VR-Emulator-Driver---SkyrimVR-Devkit)) adds two things to
+> [DubiousDuo's Devkit](https://github.com/DubiousDuo/VR-Emulator-Driver---SkyrimVR-Devkit) v2.0.1 (driver and frontend 2.0.1.1):
+>
+> - **The game is found when a launcher runs it.** Co-op launchers such as urSovngarde load SkyrimVR into their own
+>   process, so its window belongs to `urSovngarde.exe`, not `SkyrimVR.exe`, and the Devkit never saw the game focused.
+>   The frontend now writes the game's process id to `Actions\game_pid.txt`, and the driver takes a window of that
+>   process as the game. Both also know `urSovngarde.exe` and `SkyrimTogetherVR.exe` by name; more names go into
+>   `steam_location.ini` as `[Game]` `ExtraExes=a.exe,b.exe`. `driver_status.txt` shows `game_pid` and `game_match`.
+> - **Press A:** the right controller's A button, for SteamVR's dashboard and other A prompts. A keybind (G by default,
+>   Settings > Keybinds) holds it as long as the key is held, and Quick Commands has a "Press A (controller)" button.
+>   The driver lets it through for 2 seconds at most while the heartbeat is missing, so it can't stay held if the
+>   frontend dies.
+>
+> The frontend (`AHK Frontend/`, GPLv3 like the original) downloads the driver from this fork. Built by
+> `.github/workflows/build-driver.yml`.
+
+
 
 ## What This Is
 
