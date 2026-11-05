@@ -147,7 +147,7 @@ RepoURL := "https://github.com/OhLookItsDaOne/VR-Emulator-Driver---SkyrimVR-Devk
 ; This is NOT a build/release version for the AHK tool itself, this is for the driver. For anyone reading this, PLEASE don't touch these, this is for the tool to make sure things aren't fucked.
 ExpectedDriverVersion := "2.0.1.2"
 
-ScriptVersion := "2.0.1.3" ; Same as the other one, except for the Frontend only.
+ScriptVersion := "2.0.1.4" ; Same as the other one, except for the Frontend only.
 
 CandlelightOn := false
 
@@ -1601,6 +1601,25 @@ UpdateLiveMovementMode() {
 SetTimer(UpdateLiveMovementMode, 50)
 SetTimer(WriteGamePid, 1000)
 
+; The null driver checkbox is locked while SteamVR or the game runs: the change only applies after a SteamVR restart
+; anyway, and a stray click next to it in the middle of a session brought up the enabled / disabled popup.
+VrSessionRunning() {
+    return ProcessExist("vrserver.exe") || ProcessExist("vrmonitor.exe") || GamePid()
+}
+
+LockDriverCheckbox() {
+    global ChkDriverEnabled
+    static locked := -1
+    now := VrSessionRunning() ? 1 : 0
+    if now = locked
+        return
+    locked := now
+    ChkDriverEnabled.Enabled := !now
+    ChkDriverEnabled.Text := now ? "Enable Null Driver in SteamVR (locked while VR runs)" : "Enable Null Driver in SteamVR"
+}
+SetTimer(LockDriverCheckbox, 1000)
+LockDriverCheckbox()
+
 MainTick() {
     global MovementMode
     SyncGhostKeys()
@@ -2561,6 +2580,10 @@ UpdateStatus(*) {
 
 ToggleDriverEnabled(ctrl, *) {
     global StagingFile
+    if VrSessionRunning() {
+        ctrl.Value := !ctrl.Value ; a click that got through before the lock: undo it, change nothing
+        return
+    }
     if ctrl.Value {
         InstallModded()
     } else {
